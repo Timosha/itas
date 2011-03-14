@@ -164,7 +164,7 @@ function core_drush_command() {
   $items['site-install'] = array(
     'description' => 'Install Drupal along with modules/themes/configuration using the specified install profile.',
     'arguments' => array(
-      'profile' => 'the install profile you wish to run. defaults to \'default\'',
+      'profile' => 'the install profile you wish to run. defaults to \'default\' in D6, \'standard\' in D7',
     ),
     'options' => array(
       'db-url' => 'A Drupal 5/6 style database URL. Only required for initial install - not re-install.',
@@ -823,7 +823,7 @@ function drush_core_cli() {
   // In --pipe mode, just use 'drush'.
   $drush_command = $interactive_mode ? DRUSH_COMMAND.' --in-cli' : 'drush';
 
-  $bashrc_data = implode("/n/n", drush_command_invoke_all('cli_bashrc', $drush_command, $interactive_mode));
+  $bashrc_data = implode("\n\n", drush_command_invoke_all('cli_bashrc', $drush_command, $interactive_mode));
 
   // Print our bashrc file and exit in --pipe mode
   if (drush_get_context('DRUSH_PIPE')) {
