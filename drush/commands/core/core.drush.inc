@@ -110,13 +110,6 @@ function core_drush_command() {
     'deprecated-aliases' => array('script'),
     'topics' => array('docs-examplescript', 'docs-scripts'),
   );
-  $items['cache-clear'] = array(
-    'description' => 'Clear a specific cache, or all drupal caches.',
-    'arguments' => array(
-      'type' => 'The particular cache to clear. Omit this argument to choose from available caches.',
-    ),
-    'aliases' => array('cc'),
-  );
   $items['search-status'] = array(
     'description' => 'Show how many items remain to be indexed out of the total.',
     'drupal dependencies' => array('search'),
@@ -184,12 +177,11 @@ function core_drush_command() {
       'drush site-install --db-url=sqlite:/full/path/to/database.sqlite' => 'Install using SQLite (D7 only).',
       'drush site-install --account-name=joe --account-pass=mom' => 'Re-install with specified uid1 credentials.',
     ),
-    'core' => array(6,7),
+    'core' => array(6, '7+'),
     'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_ROOT,
     'aliases' => array('si'),
     'deprecated-aliases' => array('installsite', 'is'),
   );
-
   $items['drupal-directory'] = array(
     'description' => dt('Return path to a given module/theme directory.'),
     'arguments' => array(

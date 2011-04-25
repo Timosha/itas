@@ -132,7 +132,7 @@ function drush_include_engine($type, $engine, $version = NULL, $path = NULL) {
     $path = $engines[$engine]['path'];
   }
   if (!$path) {
-    return drush_set_error('DRUSH_ENGINE INCLUDE_NO_PATH', dt('No !path was set for including the !type engine !engine.', array('!path' => $path, '!type' => $type, '!engine' => $engine)));
+    return drush_set_error('DRUSH_ENGINE INCLUDE_NO_PATH', dt('No path was set for including the !type engine !engine.', array('!type' => $type, '!engine' => $engine)));
   }
   if (drush_include($path, $engine, $version)) {
     return TRUE;
@@ -324,7 +324,7 @@ function _convert_csv_to_array($args) {
  */
 function drush_get_global_options($brief = FALSE) {
   $options['root']               = array('short-form' => 'r', 'description' => dt("Drupal root directory to use (default: current directory)"), 'example-value' => '<path>');
-  $options['uri']                = array('short-form' => 'l', 'description' => dt('URI of the drupal site to use (only needed in multisite environments)'), 'example-value' => 'http://example.com');
+  $options['uri']                = array('short-form' => 'l', 'description' => dt('URI of the drupal site to use (only needed in multisite environments or when running on an alternate port)'), 'example-value' => 'http://example.com:8888');
   $options['verbose']            = array('short-form' => 'v', 'description' => dt('Display extra information about the command.'));
   $options['debug']              = array('short-form' => 'd', 'description' => dt('Display even more information, including internal messages.'));
   $options['yes']                = array('short-form' => 'y', 'description' => dt("Assume 'yes' as answer to all prompts"));

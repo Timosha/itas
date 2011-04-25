@@ -601,6 +601,13 @@ function _drush_bootstrap_drush() {
   $drush_info = drush_read_drush_info();
   define('DRUSH_VERSION', $drush_info['drush_version']);
 
+  /* Copy ETC_PREFIX and SHARE_PREFIX from environment variables if available.
+   * This alters where we check for server-wide config and alias files.
+   * Used by unit test suite to provide a clean environment.
+   */
+  if (getenv('ETC_PREFIX')) drush_set_context('ETC_PREFIX', getenv('ETC_PREFIX'));
+  if (getenv('SHARE_PREFIX')) drush_set_context('SHARE_PREFIX', getenv('SHARE_PREFIX'));
+
   // Load a drushrc.php file in the drush.php's directory.
   drush_load_config('drush');
 
@@ -764,8 +771,15 @@ function _drush_bootstrap_drupal_site_validate() {
     $drupal_base_url += array(
       'path' => NULL,
       'host' => NULL,
+      'port' => NULL,
     );
     $_SERVER['HTTP_HOST'] = $drupal_base_url['host'];
+
+    if ($drupal_base_url['port']) {
+      $_SERVER['HTTP_HOST'] .= ':' . $drupal_base_url['port'];
+    }
+    $_SERVER['SERVER_PORT'] = $drupal_base_url['port'];
+
     if (array_key_exists('path', $drupal_base_url)) {
       $_SERVER['PHP_SELF'] = $drupal_base_url['path'] . '/index.php';
     }
