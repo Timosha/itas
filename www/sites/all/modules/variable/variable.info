@@ -1,0 +1,7 @@
+name = Variable
+description = Variable Information and basic variable API
+core = 7.x
+
+files[] = includes/node.variable.inc
+files[] = includes/system.variable.inc
+files[] = includes/user.variable.inc
