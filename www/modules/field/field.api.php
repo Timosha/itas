@@ -15,7 +15,7 @@
  *
  * Fieldable entities or modules that want to have their components supported
  * should expose them using this hook. The user-defined settings (weight,
- * visibility) are automatically applied on rendered forms and displayed
+ * visible) are automatically applied on rendered forms and displayed
  * entities in a #pre_render callback added by field_attach_form() and
  * field_attach_view().
  *
@@ -757,7 +757,7 @@ function hook_field_widget_info_alter(&$info) {
 /**
  * Return the form for a single field widget.
  *
- * Field widget form elements should be based on the passed in $element, which
+ * Field widget form elements should be based on the passed-in $element, which
  * contains the base form element properties derived from the field
  * configuration.
  *
@@ -2204,7 +2204,7 @@ function hook_field_display_ENTITY_TYPE_alter(&$display, $context) {
  */
 function hook_field_extra_fields_display_alter(&$displays, $context) {
   if ($context['entity_type'] == 'taxonomy_term' && $context['view_mode'] == 'full') {
-    $displays['description']['visibility'] = FALSE;
+    $displays['description']['visible'] = FALSE;
   }
 }
 

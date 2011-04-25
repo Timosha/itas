@@ -579,7 +579,7 @@ function hook_node_load($nodes, $types) {
  * @return
  *   NODE_ACCESS_ALLOW if the operation is to be allowed;
  *   NODE_ACCESS_DENY if the operation is to be denied;
- *   NODE_ACCESSS_IGNORE to not affect this operation at all.
+ *   NODE_ACCESS_IGNORE to not affect this operation at all.
  */
 function hook_node_access($node, $op, $account) {
   $type = is_string($node) ? $node : $node->type;
@@ -1055,8 +1055,6 @@ function hook_prepare($node) {
  * comment settings, and fields managed by the Field UI module) are
  * displayed automatically by the node module. This hook just needs to
  * return the node title and form editing fields specific to the node type.
- *
- * For a detailed usage example, see node_example.module.
  *
  * @param $node
  *   The node being added or edited.

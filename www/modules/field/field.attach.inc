@@ -779,11 +779,11 @@ function field_attach_validate($entity_type, $entity) {
  * There are two levels of validation for fields in forms: widget
  * validation, and field validation.
  * - Widget validation steps are specific to a given widget's own form
- * structure and UI metaphors. They are executed through FAPI's
- * #element_validate property during normal form validation.
+ *   structure and UI metaphors. They are executed through FAPI's
+ *   #element_validate property during normal form validation.
  * - Field validation steps are common to a given field type, independently of
- * the specific widget being used in a given form. They are defined in the
- * field type's implementation of hook_field_validate().
+ *   the specific widget being used in a given form. They are defined in the
+ *   field type's implementation of hook_field_validate().
  *
  * This function performs field validation in the context of a form
  * submission. It converts field validation errors into form errors
@@ -877,7 +877,7 @@ function field_attach_presave($entity_type, $entity) {
 /**
  * Save field data for a new entity.
  *
- * The passed in entity must already contain its id and (if applicable)
+ * The passed-in entity must already contain its id and (if applicable)
  * revision id attributes.
  * Default values (if any) will be saved for fields not present in the
  * $entity.

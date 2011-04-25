@@ -1419,7 +1419,7 @@ function request_uri() {
  *   The exception that is going to be logged.
  * @param $message
  *   The message to store in the log. If empty, a text that contains all useful
- *   information about the passed in exception is used.
+ *   information about the passed-in exception is used.
  * @param $variables
  *   Array of variables to replace in the message on display. Defaults to the
  *   return value of drupal_decode_exception().
@@ -1515,8 +1515,8 @@ function watchdog($type, $message, $variables = array(), $severity = WATCHDOG_NO
  * messages without clearing them.
  *
  * @param $message
- *   The message should begin with a capital letter and always ends with a
- *   period '.'.
+ *   The message to be displayed to the user. For consistency with other
+ *   messages, it should begin with a capital letter and end with period.
  * @param $type
  *   The type of the message. One of the following values are possible:
  *   - 'status'

@@ -54,6 +54,7 @@ function system_admin_config_page() {
 
 /**
  * Provide a single block from the administration menu as a page.
+ *
  * This function is often a destination for these blocks.
  * For example, 'admin/structure/types' needs to have a destination to be valid
  * in the Drupal menu system, but too much information there might be
@@ -1028,7 +1029,7 @@ function system_modules_confirm_form($modules, $storage) {
       '@module' => $name,
       '@depends' => implode(', ', $info['depends']),
     );
-    $items[] = format_plural(count($info['depends']), 'The @module module is missing, so the following module will be disabled: @depends.', 'The @module module is missing, so the following module will be disabled: @depends.', $t_argument);
+    $items[] = format_plural(count($info['depends']), 'The @module module is missing, so the following module will be disabled: @depends.', 'The @module module is missing, so the following modules will be disabled: @depends.', $t_argument);
   }
 
   $form['text'] = array('#markup' => theme('item_list', array('items' => $items)));
