@@ -1,0 +1,132 @@
+#sidebar-first {
+border-right:1px solid #567EB6;
+border-bottom:1px solid #567EB6;
+float:left;
+width:250px;
+margin-left:-100%;
+}
+#sidebar-first .section {
+padding:0px;
+margin:0px;
+}
+.one-sidebar #content {
+width: 100%;
+float: left;
+overflow: hidden;
+}
+
+.one-sidebar #content .section {
+padding-left:250px;
+}
+
+#sidebar-first .section #block-aggregator-feed-1{
+margin:0px;
+}
+
+#sidebar-first .block {
+background:#567EB6;
+color:white;
+font-family:Tahoma;
+}
+
+#sidebar-first a {
+font-family:Tahoma;
+color:white;
+}
+
+#main-wrapper {
+
+  margin:0;
+  height:100%;
+  min-height:100%;
+}
+#main {
+margin:0 10px 20px 0px;
+  height:auto;
+  min-height:100%;
+}
+
+#main-wrapper-head {
+position:relative; height:23px; width:100%;
+}
+
+#main-wrapper-head h2 {
+display:none;
+}
+#main-wrapper-head #search-block-form {
+height:23px;
+}
+
+#main-wrapper-head .element-invisible {
+display:none;
+}
+
+#main-wrapper-head  #edit-actions {
+position:absolute;
+padding:0px;
+width:10px;
+}
+
+#main-wrapper-head-left {
+position:absolute;
+top:0px;
+left:0px;
+background: url(../images/main-wrapper-head-left.png);
+height:23px;
+width:13px;
+}
+
+#main-wrapper-head-right {
+position:absolute;
+top:0px;
+left:13px;
+background: url(../images/main-wrapper-head.png);
+right:0px;
+height:23px;
+}
+
+#sreach-title {
+position:absolute;
+right:190px;
+top:1px;
+color:white;
+height:23px;
+padding:0;
+}
+#main-wrapper-head-right #search-block-form {
+float:right;
+margin-right:3px;
+width:190px;
+}
+#main-wrapper-head-right #search-block-form .form-text{
+padding:0;
+margin:3px;
+height:16px;
+width:126px;
+font-size:13px;
+
+}
+#main-wrapper-head-right #search-block-form label{
+width:10px;
+}
+
+
+#main-wrapper-head-right #search-block-form .form-submit{
+background:url(../images/search.png);
+width:50px;
+height:17px;
+border:none;
+margin-top:3px;
+cursor:pointer;
+}
+
+#block-user-login #edit-name,
+#block-user-login #edit-pass
+ {
+width:180px;
+}
+#edit-actions--2 {
+padding-left:120px;
+padding-top:0px;
+margin:0px;
+}

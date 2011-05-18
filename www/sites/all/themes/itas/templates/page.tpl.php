@@ -95,6 +95,7 @@
     <?php endif; ?>
 
     <?php print render($page['header']); ?>
+	
 
 
 	<?php /*
@@ -109,7 +110,7 @@
 	<div id="title-background">
 	
 	<?php if ($site_slogan): ?>
-          <div id="site-slogan"<?php if ($hide_site_slogan) { print ' class="element-invisible"'; } ?>>
+          <div onClick="document.location='<?php print $front_page; ?>'" id="site-slogan" <?php if ($hide_site_slogan) { print ' class="element-invisible"'; } ?>>
             <?php print $site_slogan; ?>
           </div>
     <?php endif; ?>
@@ -140,24 +141,9 @@
       </div> <!-- /#main-menu -->
     <?php endif;*/ ?>
 
-    <?php if ($secondary_menu): ?>
-      <div id="secondary-menu" class="navigation">
-        <?php print theme('links__system_secondary_menu', array(
-          'links' => $secondary_menu,
-          'attributes' => array(
-            'id' => 'secondary-menu-links',
-            'class' => array('links', 'inline', 'clearfix'),
-          ),
-          'heading' => array(
-            'text' => t('Secondary menu'),
-            'level' => 'h2',
-            'class' => array('element-invisible'),
-          ),
-        )); ?>
-      </div> <!-- /#secondary-menu -->
-    <?php endif; ?>
 
-  </div></div></div> <!--/#menu-background /.section, /#header -->
+
+  </div></div> <!--/#menu-background /.section, /#header -->
 
   <?php if ($messages): ?>
     <div id="messages"><div class="section clearfix">
@@ -171,17 +157,13 @@
     </div></div> <!-- /.section, /#featured -->
   <?php endif; ?>
 
-  <div id="main-wrapper" class="clearfix"><div id="main" class="clearfix">
+    <div id="main-wrapper-head"><div id="main-wrapper-head-left"></div><div id="main-wrapper-head-right"><?php print render($page['main_head']); ?><div id="sreach-title"><?php print t("Search"). ':' ?></div></div></div>
 
-    <?php /* if ($breadcrumb): ?>
-      <div id="breadcrumb"><?php print $breadcrumb; ?></div>
-    <?php endif; */ ?>
+  <div id="main-wrapper" class="clearfix">
+  <div id="main" class="clearfix">
+  
+  
 
-    <?php if ($page['sidebar_first']): ?>
-      <div id="sidebar-first" class="column sidebar"><div class="section">
-        <?php print render($page['sidebar_first']); ?>
-      </div></div> <!-- /.section, /#sidebar-first -->
-    <?php endif; ?>
 
     <div id="content" class="column"><div class="section">
       <?php if ($page['highlighted']): ?><div id="highlighted"><?php print render($page['highlighted']); ?></div><?php endif; ?>
@@ -209,14 +191,31 @@
 
     </div></div> <!-- /.section, /#content -->
 
+	
+	
+	    <?php if ($page['sidebar_first']): ?>
+      <div id="sidebar-first" class="column sidebar"><div class="section">
+        <?php print render($page['sidebar_first']); ?>
+      </div></div> <!-- /.section, /#sidebar-first -->
+    <?php endif; ?>
+	
+	
+	
     <?php if ($page['sidebar_second']): ?>
       <div id="sidebar-second" class="column sidebar"><div class="section">
         <?php print render($page['sidebar_second']); ?>
       </div></div> <!-- /.section, /#sidebar-second -->
     <?php endif; ?>
 
-  </div></div> <!-- /#main, /#main-wrapper -->
+  </div> <!-- /#main--> 
+  
+  </div> <!--  /#main-wrapper --> 
+  
 
+  
+  
+  </div>  <!-- /#page --> 
+	<div style="heigth:auto; width:100%; background:white;"></div>
   <?php if ($page['triptych_first'] || $page['triptych_middle'] || $page['triptych_last']): ?>
     <div id="triptych-wrapper"><div id="triptych" class="clearfix">
       <?php print render($page['triptych_first']); ?>
@@ -224,8 +223,13 @@
       <?php print render($page['triptych_last']); ?>
     </div></div> <!-- /#triptych, /#triptych-wrapper -->
   <?php endif; ?>
+  
 
-  <div id="footer-wrapper"><div class="section">
+
+</div> <!-- /#page-wrapper -->
+
+
+      <div id="footer-wrapper"><div class="section"><div id="footer-wrapper-text"><div class="left">&copy<?php print t(' 2011, Department of. ITAS PSTU'); ?></div><div class="right"><?php print t('Powered by Drupal'); ?></div></div>
 
     <?php if ($page['footer_firstcolumn'] || $page['footer_secondcolumn'] || $page['footer_thirdcolumn'] || $page['footer_fourthcolumn']): ?>
       <div id="footer-columns" class="clearfix">
@@ -239,9 +243,9 @@
     <?php if ($page['footer']): ?>
       <div id="footer" class="clearfix">
         <?php print render($page['footer']); ?>
+
       </div> <!-- /#footer -->
     <?php endif; ?>
 
   </div></div> <!-- /.section, /#footer-wrapper -->
 
-</div></div> <!-- /#page, /#page-wrapper -->

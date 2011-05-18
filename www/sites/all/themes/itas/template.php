@@ -71,7 +71,7 @@ function itas_process_page(&$variables) {
     $variables['site_slogan'] = filter_xss_admin(variable_get('site_slogan', ''));
   }
   // Since the title and the shortcut link are both block level elements,
-  // positioning them next to each other is much simpler with a wrapper div.
+  // positioning them next to each otherF is much simpler with a wrapper div.
   if (!empty($variables['title_suffix']['add_or_remove_shortcut']) && $variables['title']) {
     // Add a wrapper div using the title_prefix and title_suffix render elements.
     $variables['title_prefix']['shortcut_wrapper'] = array(

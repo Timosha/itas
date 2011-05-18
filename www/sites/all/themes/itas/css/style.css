@@ -103,10 +103,9 @@ pre {
 /* ------------------ Fonts ------------------ */
 
 body,
-#site-slogan,
 .ui-widget,
 .comment-form label {
-  font-family: Georgia, "Times New Roman", Times, serif;
+  font-family: Tahoma, Verdana;
 }
 #header,
 #footer-wrapper,
@@ -121,13 +120,13 @@ div.meta,
 p.comment-time,
 table,
 .breadcrumb {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: Tahoma, Verdana;
 }
 input,
 textarea,
 select,
 a.button {
-  font-family: "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
+  font-family: Tahoma, Verdana;
 }
 
 /* ------------------ Reset Styles ------------------ */
@@ -198,7 +197,7 @@ table tbody tr th {
 tr td,
 tr th {
   padding: 4px 9px;
-  border: 1px solid #fff;
+  border: 1px solid black;
   text-align: left; /* LTR */
 }
 #footer-wrapper tr td,
@@ -308,141 +307,7 @@ h1#site-name {
   font-weight: normal;
 }
 
-/* Region header blocks. */
-.region-header .block {
-  font-size: 0.857em;
-  float: left; /* LTR */
-  margin: 0 10px;
-  padding: 0;
-}
-.region-header .block .content {
-  margin: 0;
-  padding: 0;
-}
-.region-header .block ul {
-  margin: 0;
-  padding: 0;
-}
-.region-header .block li {
-  list-style: none;
-  list-style-image: none;
-  padding: 0;
-}
-.region-header .form-text {
-  background: #fefefe;
-  background: rgba(255, 255, 255, 0.7);
-  border-color: #ccc;
-  border-color: rgba(255, 255, 255, 0.3);
-  margin-right: 2px; /* LTR */
-  width: 120px;
-}
-.region-header .form-text:hover,
-.region-header .form-text:focus,
-.region-header .form-text:active {
-  background: #fff;
-  background: rgba(255, 255, 255, 0.8);
-}
-.region-header .form-required {
-  color: #eee;
-  color: rgba(255, 255, 255, 0.7);
-}
-/* Region header block menus. */
-.region-header .block-menu {
-  border: 1px solid;
-  border-color: #eee;
-  border-color: rgba(255, 255, 255, 0.2);
-  padding: 0;
-  width: 208px;
-}
-.region-header .block-menu li a {
-  display: block;
-  border-bottom: 1px solid;
-  border-bottom-color: #eee;
-  border-bottom-color: rgba(255, 255, 255, 0.2);
-  padding: 3px 7px;
-}
-.region-header .block-menu li a:hover,
-.region-header .block-menu li a:focus,
-.region-header .block-menu li a:active {
-  text-decoration: none;
-  background: rgba(255, 255, 255, 0.15);
-}
-.region-header .block-menu li.last a {
-  border-bottom: 0;
-}
-/* User Login block in the header region */
-.region-header #block-user-login {
-  width: auto;
-}
-.region-header #block-user-login .content {
-  margin-top: 2px;
-}
-.region-header #block-user-login .form-item {
-  float: left; /* LTR */
-  margin: 0;
-  padding: 0;
-}
-.region-header #block-user-login div.item-list,
-.region-header #block-user-login div.description {
-  font-size: 0.916em;
-  margin: 0;
-}
-.region-header #block-user-login div.item-list {
-  clear: both;
-}
-.region-header #block-user-login div.description {
-  display: inline;
-}
-.region-header #block-user-login .item-list ul {
-  padding: 0;
-  line-height: 1;
-}
-.region-header #block-user-login .item-list li {
-  list-style: none;
-  float: left; /* LTR */
-  padding: 3px 0 1px;
-}
-.region-header #block-user-login .item-list li.last {
-  padding-left: 0.5em; /* LTR */
-}
-.region-header #block-user-login ul.openid-links li.last {
-  padding-left: 0; /* LTR */
-}
-.region-header #user-login-form li.openid-link a,
-.region-header #user-login li.openid-link a {
-  padding-left: 20px; /* LTR */
-}
-.region-header #block-user-login .form-actions {
-  margin: 4px 0 0;
-  padding: 0;
-  clear: both;
-}
-.region-header #block-user-login input.form-submit {
-  border: 1px solid;
-  border-color: #ccc;
-  border-color: rgba(255, 255, 255, 0.5);
-  background: #eee;
-  background: rgba(255, 255, 255, 0.7);
-  margin: 4px 0;
-  padding: 3px 8px;
-}
-.region-header #block-user-login input.form-submit:hover,
-.region-header #block-user-login input.form-submit:focus {
-  background: #fff;
-  background: rgba(255, 255, 255, 0.9);
-}
-/* Search block in region header. */
-.region-header #block-search-form {
-  width: 208px;
-}
-.region-header #block-search-form .form-text {
-  width: 154px;
-}
-/* Language switcher block in region header. */
-.region-header .block-locale ul li {
-  display: inline;
-  padding: 0 0.5em;
-}
+
 
 /* --------------- Main Menu ------------ */
 
@@ -461,10 +326,6 @@ h1#site-name {
 
 /* ------------------- Main ------------------- */
 
-#main {
-  margin-top: 20px;
-  margin-bottom: 40px;
-}
 
 /* ----------------- Featured ----------------- */
 
@@ -506,9 +367,7 @@ h1#site-name {
 
 /* ----------------- Content ------------------ */
 
-.content {
-  margin-top: 10px;
-}
+
 h1#page-title {
   font-size: 2em;
   line-height: 1;
@@ -693,7 +552,7 @@ ul.links {
 .sidebar .block {
   border: 1px solid;
   padding: 15px 20px;
-  margin: 0 0 20px;
+  margin: 0;
 }
 .sidebar h2 {
   margin: 0 0 0.5em;
@@ -772,122 +631,6 @@ ul.links {
   text-align: right;
 }
 
-/* ------------------ Footer ------------------ */
-
-#footer-wrapper {
-  color: #c0c0c0;
-  color: rgba(255, 255, 255, 0.65);
-  font-size: 0.857em;
-}
-#footer-wrapper a {
-  color: #fcfcfc;
-  color: rgba(255, 255, 255, 0.8);
-}
-#footer-wrapper a:hover,
-#footer-wrapper a:focus {
-  color: #fefefe;
-  color: rgba(255, 255, 255, 0.95);
-  text-decoration: underline;
-}
-#footer-wrapper .block {
-  margin: 20px 0;
-  border: 1px solid #444;
-  border-color: rgba(255, 255, 255, 0.1);
-  padding: 10px;
-}
-#footer-columns .block-menu,
-#footer .block {
-  margin: 0;
-  padding: 0;
-  border: none;
-}
-#footer .block {
-  margin: 0.5em 0;
-}
-#footer .block .content {
-  padding: 0.5em 0;
-  margin-top: 0;
-}
-#footer .block h2 {
-  margin: 0;
-}
-#footer-columns h2 {
-  border-bottom: 1px solid #555;
-  border-color: rgba(255, 255, 255, 0.15);
-  font-size: 1em;
-  margin-bottom: 0;
-  padding-bottom: 3px;
-  text-transform: uppercase;
-}
-#footer-columns .content {
-  margin-top: 0;
-}
-#footer-columns p {
-  margin-top: 1em;
-}
-#footer-columns .content ul {
-  list-style: none;
-  padding-left: 0; /* LTR */
-  margin-left: 0;
-}
-#footer-columns .content li {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-#footer-columns .content li a {
-  display: block;
-  border-bottom: 1px solid #555;
-  border-color: rgba(255, 255, 255, 0.15);
-  line-height: 1.2;
-  padding: 0.8em 2px 0.8em 20px; /* LTR */
-  text-indent: -15px;
-}
-#footer-columns .content li a:hover,
-#footer-columns .content li a:focus {
-  background-color: #1f1f21;
-  background-color: rgba(255, 255, 255, 0.05);
-  text-decoration: none;
-}
-#footer {
-  letter-spacing: 0.2px;
-  margin-top: 30px;
-  border-top: 1px solid #555;
-  border-color: rgba(255, 255, 255, 0.15);
-}
-#footer .region {
-  margin-top: 20px;
-}
-#footer .block {
-  clear: both;
-}
-#footer ul,
-#footer li {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-#footer li a {
-  float: left; /* LTR */
-  padding: 0 12px;
-  display: block;
-  border-right: 1px solid #555; /* LTR */
-  border-color: rgba(255, 255, 255, 0.15);
-}
-#footer li.first a {
-  padding-left: 0; /* LTR */
-}
-#footer li.last a {
-  padding-right: 0; /* LTR */
-  border-right: none; /* LTR */
-}
-#footer-wrapper tr.odd {
-  background-color: transparent;
-}
-#footer-wrapper tr.even {
-  background-color: #2c2c2c;
-  background-color: rgba(0, 0, 0, 0.15);
-}
 
 /* --------------- System Tabs  --------------- */
 
