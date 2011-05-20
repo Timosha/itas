@@ -5,3 +5,4 @@ git pull -s subtree variable 7.x-1.x
 git pull -s subtree ctools 7.x-1.x
 git pull -s subtree views 7.x-3.x
 git pull -s subtree ckeditor 7.x-1.x
+git pull -s subtree privatemsg 7.x-2.x
