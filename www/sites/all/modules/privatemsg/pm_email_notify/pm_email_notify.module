@@ -1,0 +1,252 @@
+<?php
+
+/**
+ * @file
+ * Notifies users about new Private Messages via Email.
+ */
+
+/**
+ * Retrieve notification setting of a user.
+ *
+ * This function retrieves user's pm notification preference from database,
+ * if user preference doesn't exist - it uses default value instead
+ *
+ * @param $uid
+ *   User uid
+ */
+function _pm_email_notify_is_enabled($uid) {
+  $notifications = &drupal_static(__FUNCTION__, array());
+  // Cache the result set in case this method is executed in batched operation which will perform many unnecessary repeated selects for the same user
+  if (!isset($notifications[$uid]) ) {
+    $mail_notification = db_query('SELECT email_notify_is_enabled FROM {pm_email_notify} WHERE user_id = :uid', array(':uid' => $uid))->fetchField();
+    if ($mail_notification === FALSE) { //db_result returns FALSE if result was not found.
+      $mail_notification = variable_get('pm_email_notify_default', TRUE);
+    }
+    $notifications[$uid] = $mail_notification;
+  }
+  return $notifications[$uid];
+}
+
+/**
+ * Implements hook_privatemsg_message_insert().
+ */
+function pm_email_notify_privatemsg_message_insert($message) {
+  foreach ($message->recipients as $recipient) {
+    // check if recipient enabled email notifications
+    if (isset($recipient->uid) && _pm_email_notify_is_enabled($recipient->uid)) {
+      // send them a new pm notification email if they did
+      $params['recipient'] = $recipient;
+      $params['message'] = $message;
+      $from = variable_get('pm_email_notify_from', '');
+      drupal_mail('pm_email_notify', 'notice', $recipient->mail, user_preferred_language($recipient), $params, !empty($from) ? $from : NULL);
+    }
+  }
+}
+
+/**
+ * Get the default text for body and subject texts.
+ *
+ * @param $key
+ *   Defines with string to return, either subject or body.
+ *
+ * @return
+ *   The default text for the given key.
+ */
+function _pm_email_notify_source_text($key) {
+  $text = variable_get('pm_email_notify_' . $key, FALSE);
+  if (empty($text)) {
+    switch ($key) {
+      case 'subject':
+        $text = 'New private message at [site:name].';
+        break;
+      case 'body':
+        $text = "Hi [privatemsg_message:recipient],\n\nThis is an automatic reminder from the site [site:name]. You have received a new private message from [privatemsg_message:author].\n\nTo read your message, follow this link:\n[privatemsg_message:url]\n\nIf you don't want to receive these emails again, change your preferences here:\n[privatemsg_message:recipient:edit-url]";
+        break;
+    }
+  }
+  return $text;
+}
+
+/**
+ * Return (if enabled, translated) body/subject strings.
+ *
+ * @param $key
+ *   Defines with string to return, either subject or body.
+ * @param $language
+ *   Optionally define into which language should be translated. Defaults to the
+ *   active language.
+ * @return
+ *   Either the translated text or the source, depending on the $translate
+ *   flag.
+ */
+function pm_email_notify_text($key, $language = NULL) {
+  $text = _pm_email_notify_source_text($key);
+
+  $function = 'i18n_string_translate';
+  if (function_exists($function)) {
+    $translated = $function('pm_email_notify:mail:mail:' . $key, $text, array('langcode' => isset($language) ? $language->language : NULL));
+    return $translated;
+  }
+  return $text;
+}
+
+
+/**
+ * Implements hook_mail().
+ */
+function pm_email_notify_mail($key, &$message, $params) {
+  switch ($key) {
+    case 'notice':
+      $data = array(
+        'privatemsg_message' => $params['message'],
+        'privatemsg_recipient' => $params['recipient'],
+      );
+      $options = array(
+        'language' => user_preferred_language($params['recipient']),
+        // Don't sanitize output since this is used in an email, not a browser.
+        'sanitize' => FALSE,
+        // Custom token to avoid custom token handling.
+        'privatemsg-display-invalid' => FALSE,
+      );
+
+      $message['subject'] = trim(token_replace(pm_email_notify_text('subject', $options['language']), $data, $options));
+      $message['body'][] = trim(token_replace(pm_email_notify_text('body', $options['language']), $data, $options));
+      break;
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function pm_email_notify_form_alter(&$form, &$form_state, $form_id) {
+  if (($form_id == 'user_register_form' || $form_id == 'user_profile_form') && $form['#user_category'] == 'account' && privatemsg_user_access('read privatemsg')) {
+    $form['privatemsg']['pm_send_notifications'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Receive email notification for incoming private messages'),
+      '#default_value' => _pm_email_notify_is_enabled($form['#user']->uid),
+      '#states' => array(
+        'visible' => array(
+          ':input[name="pm_enable"]' => array('checked' => TRUE),
+        ),
+      ),
+    );
+  }
+}
+
+/**
+ * Implements hook_user_update().
+ */
+function pm_email_notify_user_update(&$edit, $account, $category) {
+  if (isset($edit['pm_send_notifications']) && privatemsg_user_access('read privatemsg', $account)) {
+    db_merge('pm_email_notify')
+      ->fields(array('email_notify_is_enabled' => $edit['pm_send_notifications']))
+      ->key(array('user_id' => $account->uid))
+      ->execute();
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function pm_email_notify_form_privatemsg_admin_settings_alter(&$form, &$form_state) {
+  $form['pm_email_notify'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('E-mail notify'),
+    '#group' => 'settings',
+    '#weight' => 22,
+  );
+
+  $form['pm_email_notify']['pm_email_notify_default'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Notify users of new private messages by default'),
+    '#default_value' => variable_get('pm_email_notify_default', TRUE),
+    '#weight' => 0,
+  );
+
+  $form['pm_email_notify']['pm_email_notify_desc'] = array(
+    '#type' => 'item',
+    '#title' => t('Customize the email messages sent to users upon receipt of a new private message.'),
+    '#weight' => 1,
+  );
+
+  $form['pm_email_notify']['pm_email_notify_from'] = array(
+    '#type' => 'textfield',
+    '#title' => t('From e-mail address for notifications'),
+    '#default_value' => variable_get('pm_email_notify_from',''),
+    '#weight' => 2,
+    '#description' => t('This is the e-mail address that notifications will come from. Leave blank to use the site default.'),
+  );
+
+  $form['pm_email_notify']['pm_email_notify_subject'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Subject of notification messages'),
+    '#default_value' => variable_get('pm_email_notify_subject', _pm_email_notify_source_text('subject')),
+    '#weight' => 2,
+  );
+
+  $form['pm_email_notify']['pm_email_notify_body'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Body of notification messages'),
+    '#default_value' => variable_get('pm_email_notify_body', _pm_email_notify_source_text('body')),
+    '#weight' => 3,
+  );
+
+  if (module_exists('token')) {
+    $form['pm_email_notify']['token'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Token browser'),
+      '#weight' => -1,
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#weight' => 4,
+    );
+    $form['pm_email_notify']['token']['browser'] = array(
+      '#theme' => 'token_tree',
+      '#token_types' => array('privatemsg_message'),
+    );
+  }
+  else {
+    $form['pm_email_notify']['tokens'] = array(
+      '#type' => 'item',
+      '#value' => t('Available variables are: !author, !author_uid, !pm_subject, !pm_body, !thread, !site, !login_url, !uri, !uri_brief, !message (URL) and !settings (URL).'),
+      '#weight' => 4,
+    );
+  }
+
+  if (module_exists('i18n_string')) {
+    $form['#submit'][] = 'pm_email_notify_admin_settings_update_strings';
+  }
+}
+
+/**
+ * Form submit callback to update the translation string sources.
+ */
+function pm_email_notify_admin_settings_update_strings($form, &$form_state) {
+  i18n_string_update('pm_email_notify:mail:mail:subject', $form_state['values']['pm_email_notify_subject']);
+  i18n_string_update('pm_email_notify:mail:mail:body', $form_state['values']['pm_email_notify_body']);
+}
+
+/**
+ * Implements hook_i18n_string_info().
+ */
+function pm_email_notify_i18n_string_info() {
+  return array(
+    'pm_email_notify' => array(
+      'title' => t('Privatemsg Email Notification'),
+      'format' => FALSE,
+      'list' => TRUE,
+    ),
+  );
+ }
+
+ /**
+ * Refresh callback to update the string translation sources.
+ */
+function pm_email_notify_i18n_string_list($group) {
+  if ($group == 'pm_email_notify' || $group == 'all') {
+    $strings['pm_email_notify']['mail']['mail']['subject'] = _pm_email_notify_source_text('subject');
+    $strings['pm_email_notify']['mail']['mail']['body'] = _pm_email_notify_source_text('body');
+    return $strings;
+  }
+}
+
