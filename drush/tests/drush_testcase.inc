@@ -1,13 +1,5 @@
 <?php
 
-// We read from globals here because env can be empty and ini did not work in quick test.
-define('UNISH_DB_URL', $GLOBALS['UNISH_DB_URL']);
-
-// UNISH_DRUSH value can come from phpunit.xml or `which drush`.
-if (!defined('UNISH_DRUSH')) {
-  define('UNISH_DRUSH', empty($GLOBALS['UNISH_DRUSH']) ? trim(`which drush`) : $GLOBALS['UNISH_DRUSH']);
-}
-
 abstract class Drush_TestCase extends PHPUnit_Framework_TestCase {
 
   // Unix exit codes.
@@ -21,6 +13,40 @@ abstract class Drush_TestCase extends PHPUnit_Framework_TestCase {
   function __construct() {
     $this->_output = false;
   }
+
+  public static function is_windows() {
+    return (strtoupper(substr(PHP_OS, 0, 3)) == "WIN");
+  }
+
+  public static function unish_escapeshellarg($arg) {
+    // Short-circuit escaping for simple params (keep stuff readable)
+    if (preg_match('|^[a-zA-Z0-9.:/_-]*$|', $arg)) {
+      return $arg;
+    }
+    elseif (self::is_windows()) {
+      return self::_unish_escapeshellarg_windows($arg);
+    }
+    else {
+      return escapeshellarg($arg);
+    }
+  }
+
+  public static function _unish_escapeshellarg_windows($arg) {
+    // Double up existing backslashes
+    $arg = preg_replace('/\\\/', '\\\\\\\\', $arg);
+
+    // Escape double quotes.
+    $arg = preg_replace('/"/', '\\"', $arg);
+
+    // Escape single quotes.
+    $arg = preg_replace('/\'/', '\\\'', $arg);
+
+    // Add surrounding quotes.
+    $arg = '"' . $arg . '"';
+
+    return $arg;
+  }
+
 
   /**
    * Assure that each class starts with an empty sandbox directory.
@@ -95,21 +121,23 @@ abstract class Drush_TestCase extends PHPUnit_Framework_TestCase {
     *   An exit code.
     */
   function drush($command, array $args = array(), array $options = array(), $site_specification = NULL, $cd = NULL) {
-    $cmd[] = $cd ? sprintf('cd %s;', escapeshellarg($cd)) : NULL;
+    $cmd[] = $cd ? sprintf('cd %s;', self::unish_escapeshellarg($cd)) : NULL;
     $cmd[] = UNISH_DRUSH;
-    $cmd[] = empty($site_specification) ? NULL : escapeshellarg($site_specification);
+    $cmd[] = empty($site_specification) ? NULL : self::unish_escapeshellarg($site_specification);
     $cmd[] = $command;
+    if (in_array('--verbose', $_SERVER['argv'])) $args[] = '--verbose';
     if (in_array('--debug', $_SERVER['argv'])) $args[] = '--debug';
 
     foreach ($args as $arg) {
-      $cmd[] = escapeshellarg($arg);
+      $cmd[] = self::unish_escapeshellarg($arg);
     }
+    $options['nocolor'] = NULL;
     foreach ($options as $key => $value) {
       if (is_null($value)) {
         $cmd[] = "--$key";
       }
       else {
-        $cmd[] = "--$key=" . escapeshellarg($value);
+        $cmd[] = "--$key=" . self::unish_escapeshellarg($value);
       }
     }
     $exec = array_filter($cmd, 'strlen'); // Remove NULLs
@@ -219,7 +247,51 @@ abstract class Drush_TestCase extends PHPUnit_Framework_TestCase {
     return $contents;
   }
 
-  function file_delete_recursive($path) {
-    return exec('rm -rf ' . escapeshellarg($path));
+  /**
+   * Same code as drush_delete_dir().
+   * @see drush_delete_dir()
+   *
+   * @param string $dir
+   * @return boolean
+   */
+  function file_delete_recursive($dir) {
+    if (!file_exists($dir)) {
+      return TRUE;
+    }
+    if (!is_dir($dir)) {
+      @chmod($dir, 0777); // Make file writeable
+      return unlink($dir);
+    }
+    foreach (scandir($dir) as $item) {
+      if ($item == '.' || $item == '..') {
+        continue;
+      }
+      if (!self::file_delete_recursive($dir.'/'.$item)) {
+        return FALSE;
+      }
+    }
+    return rmdir($dir);
   }
+}
+
+// We read from globals here because env can be empty and ini did not work in quick test.
+define('UNISH_DB_URL', ((!empty($GLOBALS['UNISH_DB_URL'])) ? $GLOBALS['UNISH_DB_URL'] : 'mysql://root:@127.0.0.1'));
+
+// UNISH_DRUSH value can come from phpunit.xml or `which drush`.
+if (!defined('UNISH_DRUSH')) {
+  if (empty($GLOBALS['UNISH_DRUSH'])) {
+    if (Drush_TestCase::is_windows()) {
+      define('UNISH_DRUSH', exec('for %i in (drush) do @echo.   %~$PATH:i'));
+    }
+    else {
+      define('UNISH_DRUSH', trim(`which drush`));
+    }
+  }
+  else {
+    define('UNISH_DRUSH', $GLOBALS['UNISH_DRUSH']);
+  }
+}
+
+if (empty($GLOBALS['UNISH_SANDBOX'])) {
+  $GLOBALS['UNISH_SANDBOX'] = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'drush-sandbox';
 }

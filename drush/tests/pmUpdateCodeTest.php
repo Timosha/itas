@@ -22,7 +22,7 @@ class pmUpdateCode extends Drush_TestCase {
     );
     $this->drush('pm-download', array('devel-7.x-1.0-rc1'), $options);
     $this->drush('pm-download', array('webform-7.x-3.4-beta1'), $options);
-    $this->drush('pm-enable', array('devel', 'webform'), $options);
+    $this->drush('pm-enable', array('menu', 'devel', 'webform'), $options);
   }
 
   function testUpdateCode() {
@@ -59,12 +59,12 @@ class pmUpdateCode extends Drush_TestCase {
     // Verify that we keep backups as instructed.
     $pattern = 'find %s -iname %s';
     $backup_dir = UNISH_SANDBOX . '/backups';
-    $cmd = sprintf($pattern, escapeshellarg($backup_dir), escapeshellarg('devel.module'));
+    $cmd = sprintf($pattern, self::unish_escapeshellarg($backup_dir), escapeshellarg('devel.module'));
     $this->execute($cmd);
     $output = $this->getOutput();
     $this->assertNotEmpty($output);
 
-    $cmd = sprintf($pattern, escapeshellarg($backup_dir), escapeshellarg('webform.module'));
+    $cmd = sprintf($pattern, self::unish_escapeshellarg($backup_dir), escapeshellarg('webform.module'));
     $this->execute($cmd);
     $output = $this->getOutput();
     $this->assertEmpty($output);
