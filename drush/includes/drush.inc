@@ -605,7 +605,7 @@ function _drush_is_drush_shebang_script($script_filename) {
  */
 function drush_print($message = '', $indent = 0, $handle = NULL) {
   $msg = str_repeat(' ', $indent) . (string)$message . "\n";
-  if ($charset = drush_get_option('output_charset') && function_exists('iconv')) {
+  if (($charset = drush_get_option('output_charset')) && function_exists('iconv')) {
     $msg = iconv('UTF-8', $charset, $msg);
   }
   if (isset($handle)) {
@@ -739,7 +739,14 @@ function drush_print_table($rows, $header = FALSE, $widths = array(), $handle = 
     $output = str_replace("\r\n", PHP_EOL, $output);
   }
 
-  drush_print($output, 0, $handle);
+  // Check if the handle argument is a string to preserve compatability with
+  // previous versions that accepted a filename instead.
+  if (is_string($handle)) {
+    file_put_contents($handle, $output, FILE_APPEND);
+  }
+  else {
+    drush_print($output, 0, $handle);
+  }
   return $tbl;
 }
 
@@ -2066,7 +2073,8 @@ function drush_remote_command() {
       }
 
       if (drush_confirm('Continue? ') === FALSE) {
-        return drush_user_abort();
+        drush_user_abort();
+        return TRUE;
       }
     }
     $command = array_shift($args);
