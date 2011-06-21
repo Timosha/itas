@@ -947,8 +947,11 @@ function hook_menu_get_item_alter(&$router_item, $path, $original_map) {
  * called, the corresponding path components will be substituted for the
  * integers. That is, the integer 0 in an argument list will be replaced with
  * the first path component, integer 1 with the second, and so on (path
- * components are numbered starting from zero). This substitution feature allows
- * you to re-use a callback function for several different paths. For example:
+ * components are numbered starting from zero). To pass an integer without it
+ * being replaced with its respective path component, use the string value of
+ * the integer (e.g., '1') as the argument value. This substitution feature
+ * allows you to re-use a callback function for several different paths. For
+ * example:
  * @code
  *   function mymodule_menu() {
  *     $items['abc/def'] = array(
@@ -3263,6 +3266,14 @@ function hook_update_last_removed() {
  * The uninstall hook will fire when the module gets uninstalled but before the
  * module's database tables are removed, allowing your module to query its own
  * tables during this routine.
+ *
+ * When hook_uninstall() is called, your module will already be disabled, so
+ * its .module file will not be automatically included. If you need to call API
+ * functions from your .module file in this hook, use drupal_load() to make
+ * them available. (Keep this usage to a minimum, though, especially when
+ * calling API functions that invoke hooks, or API functions from modules
+ * listed as dependencies, since these may not be available or work as expected
+ * when the module is disabled.)
  *
  * @see hook_install()
  * @see hook_schema()
