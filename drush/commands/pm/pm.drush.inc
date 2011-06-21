@@ -168,6 +168,7 @@ function pm_drush_command() {
     'options' => array(
       'pipe' => 'Returns a space delimited list of projects with any of its extensions enabled and their respective version and update information, one project per line. Order: project name, current version, recommended version, update status.',
       'notes' => 'Show release notes for each project to be updated.',
+      'no-core' => 'Only update modules and skip the core update.',
     ) + $update_options,
     'sub-options' => $update_suboptions,
     'aliases' => array('upc'),
@@ -563,6 +564,8 @@ function drush_pm_find_project_from_extension($extension) {
  * Command callback. Enable one or more extensions from downloaded projects.
  */
 function drush_pm_enable() {
+  // Include update engine so we can use update_check_incompatibility().
+  drush_include_engine('drupal', 'update');
   $args = _convert_csv_to_array(func_get_args());
 
   $recheck = TRUE;
@@ -582,16 +585,20 @@ function drush_pm_enable() {
       drush_log(dt('!extension was not found and will not be enabled.', array('!extension' => $name)), 'warning');
     }
 
-    // Discard already enabled extensions.
+    // Discard already enabled and incompatible extensions.
     foreach ($extensions as $name) {
       if ($extension_info[$name]->status) {
+        drush_log(dt('!extension is already enabled.', array('!extension' => $name)), 'ok');
+      }
+      // Check if is compatible with Drupal core.
+      if (update_check_incompatibility($name, $extension_info[$name]->type)) {
+        drush_set_error('DRUSH_PM_ENABLE_MODULE_INCOMPATIBLE', dt('!name is incompatible with the Drupal version.', array('!name' => $name)));
         if ($extension_info[$name]->type == 'module') {
           unset($modules[$name]);
         }
         else {
           unset($themes[$name]);
         }
-        drush_log(dt('!extension is already enabled.', array('!extension' => $name)), 'ok');
       }
     }
 
@@ -648,8 +655,7 @@ function drush_pm_enable() {
       return FALSE;
     }
     $enabled = array_keys(array_filter(drush_get_modules(), 'pm_is_enabled'));
-    $needed = array_diff($all_dependencies, $enabled);
-    $modules = $needed + $modules;
+    $modules = array_diff(array_merge($modules, $all_dependencies), $enabled);
 
     // Discard modules which doesn't meet requirements.
     require_once drush_get_context('DRUSH_DRUPAL_ROOT') . '/includes/install.inc';
@@ -1016,6 +1022,18 @@ function drush_pm_uninstall() {
       // The module is uninstalled.
       unset($modules[$key]);
       drush_log(dt('!module is already uninstalled.', array('!module' => $module)), 'ok');
+    }
+    else {
+      $required_by = array();
+      foreach (array_keys($module_info[$module]->required_by) as $required) {
+        if ($module_info[$required]->schema_version != -1) {
+          $required_by[] = $required;
+        }
+      }
+      if (count($required_by)) {
+        drush_log(dt('To uninstall !module, the following modules must be uninstalled first: !required', array('!module' => $module, '!required' => implode(', ', $required_by))), 'error');
+        unset($modules[$key]);
+      }
     }
   }
 

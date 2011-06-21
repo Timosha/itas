@@ -22,15 +22,15 @@ function drush_pm_updatecode() {
   // Parse out project name and version.
   $requests = pm_parse_project_version($requests);
 
-  // Get update status information.
-  $update_info = _pm_get_update_info();
-
-  // Process locks specified on the command line.
-  $locked_list = drush_pm_update_lock($update_info, drush_get_option_list('lock'), drush_get_option_list('unlock'), drush_get_option('lock-message'));
-
   // Get installed extensions and projects.
   $extensions = drush_get_extensions();
   $projects = drush_get_projects($extensions);
+
+  // Get update status information.
+  $update_info = _pm_get_update_info($projects);
+
+  // Process locks specified on the command line.
+  $locked_list = drush_pm_update_lock($update_info, drush_get_option_list('lock'), drush_get_option_list('unlock'), drush_get_option('lock-message'));
 
   foreach ($extensions as $name => $extension) {
     // Add an item to $update_info for each enabled extension which was obtained
@@ -184,7 +184,12 @@ function drush_pm_updatecode() {
       else {
         drush_print(dt("NOTE: A code update for the Drupal core is available."));
       }
-      drush_print(dt("Drupal core will be updated after all of the non-core modules are updated.\n"));
+      if (drush_get_option('no-core', FALSE)) {
+        drush_print(dt('Skipping core update (--no-core specified).'));
+      }
+      else {
+        drush_print(dt("Drupal core will be updated after all of the non-core modules are updated.\n"));
+      }
     }
   }
 
@@ -209,7 +214,7 @@ function drush_pm_updatecode() {
   }
 
   // After projects are updated we can update core.
-  if ($core_update_available) {
+  if ($core_update_available && !drush_get_option('no-core', FALSE)) {
     drush_print();
     return _pm_update_core($drupal_project, $tmpfile);
   }
@@ -235,6 +240,7 @@ function _pm_update_core(&$project, $tmpfile) {
     _drush_pm_releasenotes(array('drupal'), TRUE, $tmpfile);
   }
   if(!drush_confirm(dt('Do you really want to continue?'))) {
+    drush_print(dt('Rolling back all changes. Run again with --no-core to update modules only.'));
     return drush_user_abort();
   }
 
